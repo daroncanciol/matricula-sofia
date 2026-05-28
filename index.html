@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matrícula Sofía — The English School 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+  :root {
+    --navy:#1a2744;--gold:#c8973a;--gold-light:#e8b85a;--cream:#faf7f2;
+    --red:#c0392b;--green:#27ae60;--amber:#f39c12;--gray-soft:#f0ede8;
+    --text:#2c2c2c;--text-muted:#6b6b6b;--border:#ddd5c8;--white:#ffffff;
+    --shadow:0 4px 24px rgba(26,39,68,0.10);--radius:14px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;}
+
+  .header{background:var(--navy);color:var(--white);position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.25);}
+  .header-inner{max-width:1100px;margin:0 auto;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .header-brand{display:flex;align-items:center;gap:12px;}
+  .header-crest{width:42px;height:42px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+  .header-title h1{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;line-height:1.2;}
+  .header-title p{font-size:0.72rem;color:rgba(255,255,255,0.55);margin-top:2px;font-weight:300;}
+  .header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+  .drive-chip{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,0.20);color:var(--white);background:rgba(255,255,255,0.08);transition:all 0.2s;white-space:nowrap;}
+  .drive-chip:hover{background:rgba(255,255,255,0.16);}
+  .drive-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background 0.3s;}
+  .drive-chip .dot.connected{background:#2ecc71;}
+  .drive-chip .dot.syncing{background:var(--amber);animation:pulse 1s infinite;}
+  .drive-chip .dot.error{background:var(--red);}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  .import-chip{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:99px;font-size:0.73rem;font-weight:600;cursor:pointer;border:1.5px solid rgba(255,255,255,0.20);color:rgba(255,255,255,0.80);background:transparent;transition:all 0.2s;white-space:nowrap;}
+  .import-chip:hover{border-color:var(--white);color:var(--white);}
+
+  .progress-section{background:var(--navy);border-top:1px solid rgba(255,255,255,0.08);padding:8px 28px 13px;}
+  .progress-inner{max-width:1100px;margin:0 auto;}
+  .progress-labels{display:flex;justify-content:space-between;margin-bottom:6px;}
+  .progress-labels span{font-size:0.70rem;color:rgba(255,255,255,0.50);}
+  .progress-labels strong{color:var(--gold-light);font-weight:700;}
+  .progress-bar-track{height:6px;background:rgba(255,255,255,0.10);border-radius:99px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:99px;transition:width 0.5s ease;width:0%;}
+
+  .controls{max-width:1100px;margin:22px auto 0;padding:0 22px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .filter-label{font-size:0.72rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;flex-shrink:0;}
+  .filter-btn{padding:6px 13px;border-radius:99px;border:2px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:0.77rem;font-weight:500;cursor:pointer;color:var(--text-muted);transition:all 0.18s;white-space:nowrap;}
+  .filter-btn:hover{border-color:var(--navy);color:var(--navy);}
+  .filter-btn.active{background:var(--navy);border-color:var(--navy);color:var(--white);font-weight:600;}
+  .filter-btn.s-pendiente.active{background:var(--red);border-color:var(--red);}
+  .filter-btn.s-respondida.active{background:var(--green);border-color:var(--green);}
+  .spacer{flex:1;}
+  .save-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:99px;border:none;background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:0.79rem;font-weight:700;cursor:pointer;transition:all 0.18s;box-shadow:0 2px 10px rgba(200,151,58,0.28);white-space:nowrap;}
+  .save-btn:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .export-btn{display:flex;align-items:center;gap:5px;padding:7px 13px;border-radius:99px;border:2px solid var(--gold);background:transparent;font-family:'DM Sans',sans-serif;font-size:0.77rem;font-weight:600;cursor:pointer;color:var(--gold);transition:all 0.18s;white-space:nowrap;}
+  .export-btn:hover{background:var(--gold);color:var(--navy);}
+
+  .search-wrap{max-width:1100px;margin:12px auto 0;padding:0 22px;}
+  .search-input{width:100%;padding:10px 16px 10px 40px;border:2px solid var(--border);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:0.85rem;background:var(--white);color:var(--text);outline:none;transition:border-color 0.18s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:13px center;}
+  .search-input:focus{border-color:var(--navy);}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;max-width:1100px;padding:0 22px;margin:14px auto 0;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:0.71rem;color:var(--text-muted);font-weight:500;}
+  .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  .main{max-width:1100px;margin:20px auto 60px;padding:0 22px;}
+
+  .area-section{margin-bottom:22px;background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
+  .area-section.hidden{display:none;}
+  .area-header{display:flex;align-items:center;gap:12px;padding:15px 22px;cursor:pointer;border-bottom:1px solid var(--border);background:var(--gray-soft);user-select:none;transition:background 0.15s;}
+  .area-header:hover{background:#e8e4de;}
+  .area-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .area-info{flex:1;min-width:0;}
+  .area-name{font-family:'Playfair Display',serif;font-size:0.98rem;font-weight:700;color:var(--navy);}
+  .area-contact{font-size:0.71rem;color:var(--text-muted);margin-top:2px;}
+  .area-badge{font-size:0.69rem;font-weight:700;padding:3px 9px;border-radius:99px;white-space:nowrap;}
+  .badge-green{background:#d4edda;color:#155724;}
+  .badge-amber{background:#fff3cd;color:#856404;}
+  .badge-red{background:#f8d7da;color:#721c24;}
+  .area-chevron{font-size:0.85rem;color:var(--text-muted);transition:transform 0.2s;flex-shrink:0;}
+  .area-section.collapsed .area-chevron{transform:rotate(-90deg);}
+  .area-section.collapsed .area-body{display:none;}
+
+  .q-item{padding:15px 22px;border-bottom:1px solid var(--gray-soft);}
+  .q-item:last-child{border-bottom:none;}
+  .q-item.q-hidden{display:none;}
+  .q-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;}
+  .q-num{font-size:0.64rem;font-weight:700;color:var(--white);background:var(--navy);border-radius:5px;padding:2px 7px;flex-shrink:0;margin-top:3px;}
+  .q-text{font-size:0.87rem;font-weight:500;color:var(--text);line-height:1.5;flex:1;}
+  .q-status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px;background:var(--border);transition:background 0.2s;}
+  .q-status-dot.answered{background:var(--green);}
+  .q-answer{margin-left:40px;}
+  .q-textarea{width:100%;min-height:66px;padding:9px 12px;border:2px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:0.84rem;color:var(--text);resize:vertical;outline:none;transition:border-color 0.18s,background 0.18s;background:var(--cream);line-height:1.5;}
+  .q-textarea:focus{border-color:var(--gold);background:var(--white);}
+  .q-textarea.has-answer{border-color:var(--green);background:#f0faf4;}
+  .q-meta{display:flex;justify-content:flex-end;margin-top:4px;font-size:0.68rem;color:var(--text-muted);}
+
+  .add-q-block{padding:13px 22px 16px;background:#f7f4ef;border-top:1px dashed var(--border);}
+  .add-q-label{font-size:0.71rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);margin-bottom:7px;}
+  .add-q-row{display:flex;gap:8px;align-items:center;}
+  .add-q-input{flex:1;padding:8px 12px;border:2px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:0.83rem;color:var(--text);background:var(--white);outline:none;transition:border-color 0.18s;}
+  .add-q-input:focus{border-color:var(--gold);}
+  .add-q-btn{padding:8px 15px;border-radius:8px;border:none;background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.79rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.18s;flex-shrink:0;}
+  .add-q-btn:hover{background:#2c3e6a;}
+  .custom-q-item{padding:13px 22px;border-bottom:1px solid var(--gray-soft);background:#fdfaf5;}
+  .custom-tag{display:inline-block;font-size:0.61rem;font-weight:700;background:var(--gold);color:var(--navy);border-radius:4px;padding:2px 6px;margin-right:5px;vertical-align:middle;text-transform:uppercase;letter-spacing:0.04em;}
+  .del-q-btn{float:right;background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:0.95rem;padding:2px 5px;border-radius:4px;transition:color 0.15s,background 0.15s;}
+  .del-q-btn:hover{color:var(--red);background:#fde8e8;}
+
+  /* MODALS */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(26,39,68,0.55);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--white);border-radius:20px;padding:30px;max-width:480px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:modalIn 0.22s ease;}
+  @keyframes modalIn{from{transform:scale(0.93) translateY(14px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+  .modal h2{font-family:'Playfair Display',serif;font-size:1.20rem;color:var(--navy);margin-bottom:8px;}
+  .modal p{font-size:0.81rem;color:var(--text-muted);line-height:1.6;margin-bottom:14px;}
+  .modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+  .btn-cancel{padding:8px 17px;border-radius:99px;border:2px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:0.80rem;cursor:pointer;color:var(--text-muted);font-weight:500;}
+  .btn-confirm{padding:8px 20px;border-radius:99px;border:none;background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.80rem;font-weight:700;cursor:pointer;transition:background 0.18s;}
+  .btn-confirm:hover{background:#2c3e6a;}
+  .info-box{background:var(--gray-soft);border-radius:9px;padding:12px 14px;font-size:0.78rem;color:var(--text);line-height:1.7;margin-bottom:12px;}
+  .info-box strong{color:var(--navy);}
+  .info-box code{background:#e0dbd2;padding:1px 5px;border-radius:3px;font-size:0.74rem;}
+
+  /* DRIVE MODAL STATES */
+  .drive-state{display:none;}
+  .drive-state.active{display:block;}
+  .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:2px solid var(--border);border-radius:10px;background:var(--white);font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.18s;color:var(--text);}
+  .google-btn:hover{border-color:#4285f4;background:#f0f4ff;}
+  .google-logo{width:20px;height:20px;}
+  .user-info-card{background:var(--gray-soft);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .user-avatar{width:40px;height:40px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;}
+  .user-avatar img{width:100%;height:100%;object-fit:cover;}
+  .user-details{flex:1;}
+  .user-name{font-weight:700;font-size:0.88rem;color:var(--navy);}
+  .user-email{font-size:0.74rem;color:var(--text-muted);}
+  .folder-info{background:#e8f4fd;border:1px solid #bee3f8;border-radius:9px;padding:10px 13px;font-size:0.78rem;color:#1a5276;margin-bottom:12px;}
+  .sync-log{background:var(--gray-soft);border-radius:8px;padding:10px 13px;font-size:0.74rem;color:var(--text-muted);max-height:100px;overflow-y:auto;font-family:monospace;margin-top:10px;}
+
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:11px 18px;border-radius:11px;font-size:0.82rem;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.22);transform:translateY(80px);opacity:0;transition:all 0.3s ease;z-index:1000;max-width:300px;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast.success{background:var(--green);}
+  .toast.error{background:var(--red);}
+  .toast.warning{background:var(--amber);color:var(--navy);}
+
+  #emptyState{text-align:center;padding:50px 20px;color:var(--text-muted);font-size:0.88rem;display:none;}
+
+  @media(max-width:640px){
+    .header-inner,.controls,.search-wrap,.legend,.main{padding-left:14px;padding-right:14px;}
+    .progress-section{padding:7px 14px 11px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-crest">🏫</div>
+      <div class="header-title">
+        <h1>The English School — Matrícula Sofía</h1>
+        <p>Jardín (Kinder) · Agosto 2026 · Proceso: 18–25 de junio</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="import-chip" onclick="document.getElementById('importFile').click()">⬆ Importar JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFromJSON(this)">
+      <button class="export-btn" onclick="exportToJSON()">📥 Exportar JSON</button>
+      <div class="drive-chip" id="driveChip" onclick="openDriveModal()">
+        <div class="dot" id="driveDot"></div>
+        <span id="driveLabel">Conectar Drive</span>
+      </div>
+    </div>
+  </div>
+  <div class="progress-section">
+    <div class="progress-inner">
+      <div class="progress-labels">
+        <span>Progreso general</span>
+        <strong id="progressText">0 / 0 respondidas</strong>
+      </div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <span class="filter-label">Área:</span>
+  <button class="filter-btn active" data-area="all">Todas</button>
+  <button class="filter-btn" data-area="transporte">🚌 Transporte</button>
+  <button class="filter-btn" data-area="alimentacion">🍽️ Alimentación</button>
+  <button class="filter-btn" data-area="salud">🏥 Salud</button>
+  <button class="filter-btn" data-area="extracurriculares">⚽ Extracurriculares</button>
+  <button class="filter-btn" data-area="seguridad">🔒 Seguridad</button>
+  <button class="filter-btn" data-area="matriculas">📋 Matrículas</button>
+  <button class="filter-btn" data-area="comunicaciones">📱 Comunicaciones</button>
+  <button class="filter-btn" data-area="uniformes">👕 Uniformes</button>
+  <button class="filter-btn" data-area="pagos">💳 Pagos</button>
+  <span class="spacer"></span>
+  <span class="filter-label">Estado:</span>
+  <button class="filter-btn s-pendiente" data-status="pendiente">● Sin responder</button>
+  <button class="filter-btn s-respondida" data-status="respondida">● Respondidas</button>
+  <button class="save-btn" onclick="saveLocal()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    Guardar
+  </button>
+</div>
+
+<div class="search-wrap">
+  <input class="search-input" id="searchInput" type="text" placeholder="Buscar pregunta..." oninput="applyFilters()">
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Sin responder</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Respondida</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Pregunta propia</div>
+</div>
+
+<main class="main" id="mainContent"></main>
+<div id="emptyState">No se encontraron preguntas con los filtros seleccionados.</div>
+
+<!-- DRIVE MODAL -->
+<div class="modal-overlay" id="driveModal">
+  <div class="modal" style="max-width:500px">
+    <h2>☁️ Google Drive</h2>
+
+    <!-- STATE: not signed in -->
+    <div class="drive-state active" id="ds-login">
+      <p>Inicia sesión con Google para guardar y sincronizar tus respuestas automáticamente en tu carpeta de Drive.</p>
+      <div class="info-box">
+        <strong>Carpeta destino:</strong><br>
+        drive.google.com/drive/folders/<code>13CNk8gJzyirI8HKXYRVfqjoEhcSTtjVK</code><br><br>
+        <strong>Archivo:</strong> <code>TES_Matricula_Sofia_2026.json</code><br>
+        <strong>Sync:</strong> Automático al guardar y al abrir la app
+      </div>
+      <button class="google-btn" onclick="signInWithGoogle()">
+        <svg class="google-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </button>
+      <div class="modal-btns"><button class="btn-cancel" onclick="closeDriveModal()">Cancelar</button></div>
+    </div>
+
+    <!-- STATE: signed in -->
+    <div class="drive-state" id="ds-connected">
+      <div class="user-info-card">
+        <div class="user-avatar" id="userAvatar">👤</div>
+        <div class="user-details">
+          <div class="user-name" id="userName">—</div>
+          <div class="user-email" id="userEmail">—</div>
+        </div>
+      </div>
+      <div class="folder-info">
+        📁 Guardando en tu carpeta de Drive configurada<br>
+        <strong>Archivo:</strong> TES_Matricula_Sofia_2026.json
+      </div>
+      <div class="sync-log" id="syncLog">Listo para sincronizar.</div>
+      <div class="modal-btns">
+        <button class="btn-cancel" onclick="signOut()">Cerrar sesión</button>
+        <button class="btn-confirm" onclick="syncNow()">🔄 Sincronizar ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT CONFIRM MODAL -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <h2>⬆ Importar respuestas</h2>
+    <p id="importSummary"></p>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="document.getElementById('importModal').classList.remove('open')">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmImport()">Importar y restaurar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════
+const CONFIG = {
+  CLIENT_ID: 'PENDING_CLIENT_ID',   // <-- se completa en Paso 2
+  FOLDER_ID: '13CNk8gJzyirI8HKXYRVfqjoEhcSTtjVK',
+  FILE_NAME: 'TES_Matricula_Sofia_2026.json',
+  SCOPES: 'https://www.googleapis.com/auth/drive.file',
+  SK: 'TES_matricula_sofia_2026'
+};
+
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const AREAS = [
+  { id:'transporte', icon:'🚌', color:'#1a5276', name:'Transporte',
+    contact:'Verónica Ramírez — Analista de Transporte',
+    questions:[
+      '¿Cuáles son las rutas disponibles que cubren el sector de Bogotá donde vivimos y cuál es el tiempo aproximado de recorrido?',
+      '¿Cuál es el costo mensual del servicio de transporte para Jardín y qué incluye?',
+      '¿Cómo funciona la aplicación de seguimiento en tiempo real? ¿Es compatible con iOS y Android?',
+      '¿Con qué empresa operadora quedará asignada nuestra ruta (Escotur, Torues de Colombia o Cajitur)?',
+      '¿Existe un periodo de gracia o proceso de adaptación para los niños de Jardín durante los primeros días?',
+      '¿Qué pasa si el niño no puede tomar la ruta un día específico? ¿Cómo se notifica al conductor/monitora?',
+      '¿Hay monitora acompañante en la ruta durante todo el trayecto para los grados de Early Years?',
+      '¿Cuándo exactamente se envía la circular informativa de agosto con detalles de ruta y horario?',
+    ]},
+  { id:'alimentacion', icon:'🍽️', color:'#1e8449', name:'Alimentación',
+    contact:'Eva Cubillos — Coordinadora · Empresa: SAPORE',
+    questions:[
+      '¿El almuerzo está incluido en el valor de la matrícula/pensión o es un servicio adicional con costo aparte?',
+      '¿Cuál es el menú para los niños de Jardín y cómo se atienden alergias o intolerancias alimentarias?',
+      '¿Cómo se accede al ciclo de menús en la intranet? ¿Desde qué fecha estará disponible para padres de familia nuevos?',
+      '¿Los niños de Jardín tienen refrigerio incluido además del almuerzo?',
+      '¿Qué debo llevar de casa respecto a alimentación para los primeros días antes del inicio formal del servicio?',
+      '¿TES Bites aplica desde Jardín o solo desde primero? ¿Qué productos pueden comprar los niños de Early Years?',
+      '¿Se informa cuando el niño no comió bien o tuvo alguna dificultad con los alimentos?',
+    ]},
+  { id:'salud', icon:'🏥', color:'#922b21', name:'Salud',
+    contact:'Dra. Carolina Baena · areadesalud@englishschool.edu.co · EMERMEDICA',
+    questions:[
+      '¿Qué documentos médicos debo entregar durante el proceso de matrícula (carné de vacunas, historia clínica, etc.)?',
+      '¿En qué consiste la evaluación diagnóstica que se menciona? ¿Se hace al inicio del año escolar?',
+      '¿Cuál es el protocolo cuando un niño de Jardín se enferma durante la jornada escolar?',
+      '¿Pueden administrar medicamentos al niño si lo requiere? ¿Qué autorización se necesita?',
+      '¿Cómo funciona la cobertura de EMERMEDICA? ¿Es complementaria al seguro médico privado que ya tenemos?',
+      '¿Existe algún formulario de condiciones médicas preexistentes o restricciones físicas que deba diligenciar?',
+      '¿A qué número o correo me contacto en caso de emergencia médica durante horario escolar?',
+    ]},
+  { id:'extracurriculares', icon:'⚽', color:'#884ea0', name:'Extracurriculares y Deportes',
+    contact:'Adriana Gómez — Coordinadora · Tomás Tovar — Líder Deportes',
+    questions:[
+      '¿Qué actividades extracurriculares están disponibles específicamente para niños de Jardín?',
+      '¿Cuáles son los días y horarios disponibles de extracurriculares para Jardín (el horario indicado 2:40–4:30 ¿aplica para todos los grados)?',
+      '¿Cuándo inicia el proceso de inscripción a extracurriculares y cómo se hace?',
+      '¿Tienen cupo limitado por actividad? ¿Se asignan por orden de inscripción?',
+      '¿Hay ruta de regreso disponible después de extracurriculares (4:50) para niños de Jardín?',
+      '¿Los deportes inician formalmente desde primero — ¿hay algo equivalente para Early Years?',
+      '¿Cuál es el costo adicional mensual de las actividades extracurriculares?',
+    ]},
+  { id:'seguridad', icon:'🔒', color:'#1a2744', name:'Seguridad',
+    contact:'G4S — Empresa de Seguridad',
+    questions:[
+      '¿Qué documentos debo llevar el primer día para el registro de padres y acudientes (huella y foto)?',
+      '¿El registro biométrico (huella + foto) de padres es para ambos o solo para quien haga el trámite?',
+      '¿Cuántos acudientes autorizados puedo registrar y cuál es el proceso para agregar o retirar uno después?',
+      '¿Qué ocurre si un familiar no registrado necesita recoger al niño en caso de emergencia?',
+      '¿La primera semana el registro de seguridad se realiza en cualquier momento o hay horario específico?',
+      '¿El circuito de entrada por portería 3 aplica para todos los grados o solo para Early Years?',
+      '¿En qué punto exactamente entrego al niño al bajarlo del vehículo en la mañana?',
+    ]},
+  { id:'matriculas', icon:'📋', color:'#c0392b', name:'Matrículas',
+    contact:'Corina Velásquez — Secretaria · Proceso: 18–25 de junio 2026',
+    questions:[
+      '¿Cuál es la lista completa y definitiva de documentos requeridos para el proceso de matrícula?',
+      '¿El proceso de matrícula se realiza de forma presencial, virtual o híbrida?',
+      '¿Existe algún formulario previo en línea que deba completar antes de la cita de matrícula?',
+      '¿Se debe pagar algún valor en el momento de formalizar la matrícula (matrícula como cuota inicial)?',
+      '¿Cuándo se envían las credenciales del correo institucional y acceso a la intranet?',
+      '¿Hay fechas específicas para el proceso de inducción de Jardín con los padres antes del inicio de clases?',
+      '¿Cuáles son las fechas del período de adaptación para Jardín en agosto?',
+    ]},
+  { id:'comunicaciones', icon:'📱', color:'#117a8b', name:'Comunicaciones',
+    contact:'Luciana — Coordinadora de Comunicaciones',
+    questions:[
+      '¿A qué dirección de correo debo escribir antes de recibir el correo institucional para comunicaciones urgentes?',
+      '¿ManageBac está disponible desde el primer día de clases o lo activan después?',
+      '¿Qué funcionalidades de ManageBac se usan para Jardín (reportes, tareas, portafolio)?',
+      '¿Las circulares y comunicados oficiales llegan únicamente al correo institucional o también por otro canal (WhatsApp, app)?',
+      '¿La intranet de padres es diferente a ManageBac o es la misma plataforma?',
+      '¿Hay un grupo oficial de padres de familia del curso o está prohibido por política del colegio?',
+    ]},
+  { id:'uniformes', icon:'👕', color:'#b7770d', name:'Uniformes',
+    contact:'Área Administrativa',
+    questions:[
+      '¿Dónde se adquieren los uniformes (proveedor oficial, tienda del colegio)?',
+      '¿Cuáles son los uniformes obligatorios para el primer día de clases de Jardín?',
+      '¿Cuándo inician con la camiseta de la casa y qué pasa entre tanto?',
+      '¿Hay una guía de tallas o se pueden probar los uniformes antes de comprar?',
+      '¿El hoodie (prenda accesoria) tiene alguna restricción de uso dentro del colegio?',
+      '¿Hay lista de útiles o materiales escolares que deba tener Sofía para Jardín?',
+      '¿Las sudaderas deben tener marcado el nombre? ¿Hay proveedor recomendado para el marcado?',
+    ]},
+  { id:'pagos', icon:'💳', color:'#1a5276', name:'Facturación, Pagos y Cartera',
+    contact:'Área Financiera / Cartera',
+    questions:[
+      '¿Cuál es el valor exacto de la pensión mensual para Jardín y a partir de cuándo inicia la facturación?',
+      '¿La facturación se genera el primer día hábil del mes y el vencimiento es el día 10 de cada mes?',
+      '¿Los servicios adicionales (transporte, alimentación, extracurriculares) se facturan en la misma factura o por separado?',
+      '¿Las salidas y actividades pedagógicas se facturan solo cuando la familia firma la autorización?',
+      '¿Cuánto es exactamente el recargo por pago extemporáneo (después del día 10) y cuándo aplica reporte a centrales de riesgo?',
+      '¿El descuento de anualidad aplica sobre el valor total del año o sobre los servicios adicionales también?',
+      '¿El pago de 10 mensualidades con descuento del 4%: se hace en un solo pago o en cuotas?',
+      '¿El pago de 5 a 9 meses con descuento del 2%: cómo funciona exactamente este esquema?',
+      '¿Los medios de pago PSE (débito, tarjeta crédito) y recibo banco aplican sin ningún costo adicional por transacción?',
+      '¿Cuál es el proceso para registrar el responsable tributario y qué datos exactos se necesitan para emitir factura electrónica?',
+      '¿Si somos dos padres contribuyentes, pueden emitirse facturas a nombre de cada uno en proporciones distintas?',
+    ]},
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let answers = {};
+let customQuestions = {};
+let currentAreaFilter = 'all';
+let currentStatusFilter = 'all';
+let googleToken = null;
+let driveFileId = '';
+let currentUser = null;
+let pendingImportData = null;
+let autoSaveTimer;
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+function init() {
+  loadLocal();
+  renderAll();
+  updateProgress();
+  updateDriveUI();
+  tryRestoreSession();
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
+function renderAll() {
+  const main = document.getElementById('mainContent');
+  main.innerHTML = '';
+  AREAS.forEach(area => {
+    const sec = document.createElement('div');
+    sec.className = 'area-section';
+    sec.dataset.area = area.id;
+    const cqs = customQuestions[area.id] || [];
+    sec.innerHTML = `
+      <div class="area-header" onclick="toggleArea('${area.id}')">
+        <div class="area-icon" style="background:${area.color}20">${area.icon}</div>
+        <div class="area-info">
+          <div class="area-name">${area.name}</div>
+          <div class="area-contact">${area.contact}</div>
+        </div>
+        <div class="area-stats"><span class="area-badge" id="badge-${area.id}">—</span></div>
+        <div class="area-chevron">▾</div>
+      </div>
+      <div class="area-body" id="body-${area.id}">
+        ${area.questions.map((q,i) => renderQ(area.id,i,q)).join('')}
+        ${cqs.map(cq => renderCQ(area.id,cq)).join('')}
+        <div class="add-q-block">
+          <div class="add-q-label">➕ Agregar pregunta propia</div>
+          <div class="add-q-row">
+            <input class="add-q-input" type="text" id="newq-${area.id}"
+              placeholder="Escribe tu pregunta..."
+              onkeydown="if(event.key==='Enter')addCustomQ('${area.id}')">
+            <button class="add-q-btn" onclick="addCustomQ('${area.id}')">Agregar</button>
+          </div>
+        </div>
+      </div>`;
+    main.appendChild(sec);
+  });
+  updateAllBadges();
+}
+
+function renderQ(areaId, idx, text) {
+  const key = `${areaId}_${idx}`;
+  const val = answers[key] || '';
+  const has = val.trim().length > 0;
+  return `<div class="q-item" id="qi-${key}" data-area="${areaId}" data-idx="${idx}">
+    <div class="q-top">
+      <span class="q-num">${String(idx+1).padStart(2,'0')}</span>
+      <div class="q-text">${text}</div>
+      <div class="q-status-dot ${has?'answered':''}" id="dot-${key}"></div>
+    </div>
+    <div class="q-answer">
+      <textarea class="q-textarea ${has?'has-answer':''}" id="ta-${key}"
+        placeholder="Escribe aquí la respuesta obtenida..."
+        oninput="onAnswer('${key}',this)">${val}</textarea>
+      <div class="q-meta" id="meta-${key}">${has?'✓ Respondida':''}</div>
+    </div>
+  </div>`;
+}
+
+function renderCQ(areaId, cq) {
+  const key = `custom_${areaId}_${cq.id}`;
+  const val = answers[key] || '';
+  const has = val.trim().length > 0;
+  return `<div class="custom-q-item q-item" id="qi-${key}" data-area="${areaId}" data-idx="${key}" data-custom="1">
+    <div class="q-top">
+      <span class="custom-tag">Nueva</span>
+      <div class="q-text" style="flex:1">${cq.text}</div>
+      <button class="del-q-btn" onclick="delCustomQ('${areaId}','${cq.id}')">✕</button>
+      <div class="q-status-dot ${has?'answered':''}" id="dot-${key}" style="margin-left:6px"></div>
+    </div>
+    <div class="q-answer" style="margin-left:0">
+      <textarea class="q-textarea ${has?'has-answer':''}" id="ta-${key}"
+        placeholder="Escribe aquí la respuesta..."
+        oninput="onAnswer('${key}',this)">${val}</textarea>
+      <div class="q-meta" id="meta-${key}">${has?'✓ Respondida':''}</div>
+    </div>
+  </div>`;
+}
+
+function toggleArea(id) {
+  document.querySelector(`.area-section[data-area="${id}"]`)?.classList.toggle('collapsed');
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANSWER
+// ═══════════════════════════════════════════════════════════
+function onAnswer(key, el) {
+  answers[key] = el.value;
+  const has = el.value.trim().length > 0;
+  el.classList.toggle('has-answer', has);
+  const dot = document.getElementById('dot-'+key);
+  if (dot) dot.className = 'q-status-dot '+(has?'answered':'');
+  const meta = document.getElementById('meta-'+key);
+  if (meta) meta.textContent = has ? '✓ Respondida' : '';
+  updateProgress();
+  updateBadge(key.split('_')[0] === 'custom' ? key.split('_')[1] : key.split('_')[0]);
+  autoSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// CUSTOM QUESTIONS
+// ═══════════════════════════════════════════════════════════
+function addCustomQ(areaId) {
+  const input = document.getElementById('newq-'+areaId);
+  const text = (input?.value||'').trim();
+  if (!text) { input?.focus(); return; }
+  if (!customQuestions[areaId]) customQuestions[areaId] = [];
+  const cq = { id:'cq_'+Date.now(), text };
+  customQuestions[areaId].push(cq);
+  input.value = '';
+  const addBlock = document.querySelector(`#body-${areaId} .add-q-block`);
+  if (addBlock) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = renderCQ(areaId, cq);
+    addBlock.parentNode.insertBefore(tmp.firstElementChild, addBlock);
+  }
+  updateBadge(areaId);
+  updateProgress();
+  autoSave();
+  showToast('✓ Pregunta agregada', 'success');
+}
+
+function delCustomQ(areaId, cqId) {
+  if (!customQuestions[areaId]) return;
+  customQuestions[areaId] = customQuestions[areaId].filter(q => q.id !== cqId);
+  delete answers[`custom_${areaId}_${cqId}`];
+  document.getElementById(`qi-custom_${areaId}_${cqId}`)?.remove();
+  updateBadge(areaId);
+  updateProgress();
+  autoSave();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS & BADGES
+// ═══════════════════════════════════════════════════════════
+function updateProgress() {
+  let total = 0, answered = 0;
+  AREAS.forEach(a => {
+    a.questions.forEach((_,i) => { total++; if((answers[`${a.id}_${i}`]||'').trim()) answered++; });
+    (customQuestions[a.id]||[]).forEach(cq => { total++; if((answers[`custom_${a.id}_${cq.id}`]||'').trim()) answered++; });
+  });
+  const pct = total ? Math.round(answered/total*100) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `${answered} / ${total} respondidas (${pct}%)`;
+}
+
+function updateAllBadges() { AREAS.forEach(a => updateBadge(a.id)); }
+
+function updateBadge(areaId) {
+  const area = AREAS.find(a => a.id === areaId);
+  if (!area) return;
+  let total = area.questions.length, answered = 0;
+  area.questions.forEach((_,i) => { if((answers[`${areaId}_${i}`]||'').trim()) answered++; });
+  (customQuestions[areaId]||[]).forEach(cq => { total++; if((answers[`custom_${areaId}_${cq.id}`]||'').trim()) answered++; });
+  const b = document.getElementById('badge-'+areaId);
+  if (!b) return;
+  b.textContent = `${answered}/${total}`;
+  b.className = 'area-badge '+(answered===total?'badge-green':answered>0?'badge-amber':'badge-red');
+}
+
+// ═══════════════════════════════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════════════════════════════
+document.querySelectorAll('[data-area]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-area]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentAreaFilter = btn.dataset.area;
+    applyFilters();
+  });
+});
+document.querySelectorAll('[data-status]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('active')) { btn.classList.remove('active'); currentStatusFilter='all'; }
+    else { document.querySelectorAll('[data-status]').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); currentStatusFilter=btn.dataset.status; }
+    applyFilters();
+  });
+});
+
+function applyFilters() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  let anyVisible = false;
+  document.querySelectorAll('.area-section').forEach(sec => {
+    const areaId = sec.dataset.area;
+    const areaMatch = currentAreaFilter==='all' || currentAreaFilter===areaId;
+    let areaHas = false;
+    sec.querySelectorAll('.q-item').forEach(qi => {
+      const rawIdx = qi.dataset.idx;
+      const isCustom = qi.dataset.custom==='1';
+      const key = isCustom ? rawIdx : `${areaId}_${rawIdx}`;
+      const answered = !!(answers[key]||'').trim();
+      const qText = (qi.querySelector('.q-text')?.textContent||'').toLowerCase();
+      let statusMatch = true;
+      if (currentStatusFilter==='pendiente') statusMatch = !answered;
+      if (currentStatusFilter==='respondida') statusMatch = answered;
+      const visible = areaMatch && statusMatch && (!search||qText.includes(search));
+      qi.classList.toggle('q-hidden', !visible);
+      if (visible) { areaHas=true; anyVisible=true; }
+    });
+    const addBlock = sec.querySelector('.add-q-block');
+    if (addBlock) addBlock.style.display = areaMatch?'':'none';
+    sec.classList.toggle('hidden', !areaHas && !areaMatch);
+  });
+  document.getElementById('emptyState').style.display = anyVisible?'none':'block';
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOCAL STORAGE
+// ═══════════════════════════════════════════════════════════
+function autoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveLocal(true), 1500);
+}
+
+function saveLocal(silent=false) {
+  try {
+    localStorage.setItem(CONFIG.SK, JSON.stringify({ answers, customQuestions, savedAt: new Date().toISOString() }));
+    if (!silent) showToast('✓ Guardado localmente', 'success');
+    if (googleToken) scheduleDriveSync();
+  } catch(e) { showToast('Error guardando: '+e.message, 'error'); }
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(CONFIG.SK);
+    if (raw) { const d=JSON.parse(raw); answers=d.answers||{}; customQuestions=d.customQuestions||{}; }
+    driveFileId = localStorage.getItem(CONFIG.SK+'_fileId') || '';
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════
+function exportToJSON() {
+  const data = { version:'1.0', exportedAt:new Date().toISOString(), student:'Sofía Roncancio', grade:'Jardín (Kinder) 2026', answers, customQuestions };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`TES_Sofia_respuestas_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 JSON exportado', 'success');
+}
+
+function importFromJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const numR = Object.keys(data.answers||{}).filter(k=>(data.answers[k]||'').trim()).length;
+      const numC = Object.values(data.customQuestions||{}).reduce((acc,arr)=>acc+arr.length,0);
+      pendingImportData = data;
+      document.getElementById('importSummary').innerHTML =
+        `Se encontraron <strong>${numR} respuestas</strong> y <strong>${numC} preguntas personalizadas</strong>.<br><br>
+         Exportado el: ${data.exportedAt ? new Date(data.exportedAt).toLocaleString('es-CO') : 'fecha desconocida'}<br><br>
+         ¿Deseas importarlas? Las respuestas existentes se combinarán (no se borran).`;
+      document.getElementById('importModal').classList.add('open');
+    } catch(err) { showToast('Error leyendo el archivo JSON', 'error'); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function confirmImport() {
+  if (!pendingImportData) return;
+  if (pendingImportData.answers) Object.assign(answers, pendingImportData.answers);
+  if (pendingImportData.customQuestions) {
+    Object.keys(pendingImportData.customQuestions).forEach(areaId => {
+      if (!customQuestions[areaId]) customQuestions[areaId]=[];
+      const ids = customQuestions[areaId].map(q=>q.id);
+      pendingImportData.customQuestions[areaId].forEach(cq => { if(!ids.includes(cq.id)) customQuestions[areaId].push(cq); });
+    });
+  }
+  saveLocal(true);
+  renderAll();
+  applyFilters();
+  updateProgress();
+  document.getElementById('importModal').classList.remove('open');
+  showToast('✓ Respuestas importadas correctamente', 'success');
+  pendingImportData = null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// GOOGLE OAUTH — Google Identity Services
+// ═══════════════════════════════════════════════════════════
+function tryRestoreSession() {
+  // GIS no persiste tokens automáticamente; el usuario debe iniciar sesión cada vez
+  // pero el localStorage mantiene las respuestas
+}
+
+function signInWithGoogle() {
+  if (CONFIG.CLIENT_ID === 'PENDING_CLIENT_ID') {
+    showToast('⚠ El Client ID de Google aún no está configurado', 'warning');
+    addSyncLog('ERROR: Client ID pendiente. Completa el Paso 2 en Google Cloud Console.');
+    return;
+  }
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.CLIENT_ID,
+    scope: CONFIG.SCOPES,
+    callback: (resp) => {
+      if (resp.error) { showToast('Error autenticando con Google', 'error'); return; }
+      googleToken = resp.access_token;
+      fetchUserInfo().then(() => {
+        showDriveState('ds-connected');
+        updateDriveUI();
+        syncNow();
+      });
+    }
+  });
+  client.requestAccessToken();
+}
+
+async function fetchUserInfo() {
+  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: 'Bearer '+googleToken }
+  });
+  if (!res.ok) return;
+  currentUser = await res.json();
+  document.getElementById('userName').textContent = currentUser.name || '—';
+  document.getElementById('userEmail').textContent = currentUser.email || '—';
+  const avatar = document.getElementById('userAvatar');
+  if (currentUser.picture) avatar.innerHTML = `<img src="${currentUser.picture}" alt="avatar">`;
+}
+
+function signOut() {
+  googleToken = null; currentUser = null; driveFileId = '';
+  localStorage.removeItem(CONFIG.SK+'_fileId');
+  showDriveState('ds-login');
+  updateDriveUI();
+  closeDriveModal();
+  showToast('Sesión de Google cerrada', 'success');
+}
+
+// ═══════════════════════════════════════════════════════════
+// GOOGLE DRIVE SYNC
+// ═══════════════════════════════════════════════════════════
+let syncTimer;
+function scheduleDriveSync() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncNow, 3000);
+}
+
+async function syncNow() {
+  if (!googleToken) return;
+  setSyncing(true);
+  addSyncLog('Iniciando sincronización...');
+  try {
+    if (!driveFileId) {
+      await findOrCreateFile();
+    } else {
+      await updateFile();
+    }
+    addSyncLog('✓ Sincronizado: '+new Date().toLocaleTimeString('es-CO'));
+    showToast('☁️ Guardado en Drive', 'success');
+  } catch(e) {
+    addSyncLog('✗ Error: '+e.message);
+    showToast('Error sincronizando con Drive', 'error');
+  }
+  setSyncing(false);
+}
+
+async function findOrCreateFile() {
+  // Search for existing file in folder
+  const q = encodeURIComponent(`name='${CONFIG.FILE_NAME}' and '${CONFIG.FOLDER_ID}' in parents and trashed=false`);
+  const res = await gFetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`);
+  const data = await res.json();
+  if (data.files && data.files.length > 0) {
+    driveFileId = data.files[0].id;
+    localStorage.setItem(CONFIG.SK+'_fileId', driveFileId);
+    addSyncLog('Archivo existente encontrado: '+driveFileId);
+    await updateFile();
+  } else {
+    await createFile();
+  }
+}
+
+async function createFile() {
+  const content = buildPayload();
+  const meta = { name: CONFIG.FILE_NAME, mimeType:'application/json', parents:[CONFIG.FOLDER_ID] };
+  const form = new FormData();
+  form.append('metadata', new Blob([JSON.stringify(meta)],{type:'application/json'}));
+  form.append('file', new Blob([content],{type:'application/json'}));
+  const res = await gFetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { method:'POST', body:form });
+  const data = await res.json();
+  driveFileId = data.id;
+  localStorage.setItem(CONFIG.SK+'_fileId', driveFileId);
+  addSyncLog('Archivo creado en Drive: '+driveFileId);
+}
+
+async function updateFile() {
+  const content = buildPayload();
+  await gFetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'}, body:content
+  });
+}
+
+function buildPayload() {
+  return JSON.stringify({ version:'1.0', savedAt:new Date().toISOString(), student:'Sofía Roncancio', grade:'Jardín (Kinder) 2026', answers, customQuestions }, null, 2);
+}
+
+async function gFetch(url, opts={}) {
+  const res = await fetch(url, { ...opts, headers: { ...(opts.headers||{}), Authorization:'Bearer '+googleToken } });
+  if (res.status === 401) { googleToken=null; updateDriveUI(); throw new Error('Token expirado, inicia sesión de nuevo'); }
+  return res;
+}
+
+// ═══════════════════════════════════════════════════════════
+// DRIVE UI
+// ═══════════════════════════════════════════════════════════
+function openDriveModal() { document.getElementById('driveModal').classList.add('open'); }
+function closeDriveModal() { document.getElementById('driveModal').classList.remove('open'); }
+
+function showDriveState(stateId) {
+  document.querySelectorAll('.drive-state').forEach(s=>s.classList.remove('active'));
+  document.getElementById(stateId)?.classList.add('active');
+}
+
+function updateDriveUI() {
+  const dot = document.getElementById('driveDot');
+  const label = document.getElementById('driveLabel');
+  if (googleToken) { dot.className='dot connected'; label.textContent=currentUser?.name||'Drive conectado'; }
+  else { dot.className='dot'; label.textContent='Conectar Drive'; }
+}
+
+function setSyncing(val) {
+  const dot = document.getElementById('driveDot');
+  const label = document.getElementById('driveLabel');
+  if (val) { dot.className='dot syncing'; label.textContent='Sincronizando...'; }
+  else updateDriveUI();
+}
+
+function addSyncLog(msg) {
+  const log = document.getElementById('syncLog');
+  if (!log) return;
+  log.textContent += '\n'+msg;
+  log.scrollTop = log.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(type||'');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.className='toast';},3200);
+}
+
+// ═══════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
